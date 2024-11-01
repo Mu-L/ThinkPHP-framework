@@ -67,18 +67,19 @@ class ValidateTest extends TestCase
         $validate->setLang($this->lang);
 
         $rule = [
-            'tag'      => 'require',
-            'password' => 'acceptedIf:tag,1',
+            'tag'    => 'require',
+            'accept' => 'require|acceptedIf:tag,1',
         ];
 
         $data = [
-            'tag' => '1',
+            'tag'    => '1',
+            'accept' => 2,
         ];
 
         $result = $validate->rule($rule)->check($data);
 
         $this->assertFalse($result);
-        $this->assertEquals('password must be yes,on,true or 1', $validate->getError());
+        $this->assertEquals('accept must be yes,on,true or 1', $validate->getError('accept'));
     }
 
     public function testDeclinedIf()
@@ -87,18 +88,19 @@ class ValidateTest extends TestCase
         $validate->setLang($this->lang);
 
         $rule = [
-            'tag'      => 'require',
-            'password' => 'declinedIf:tag,1',
+            'tag'    => 'require',
+            'accept' => 'require|declinedIf:tag,1',
         ];
 
         $data = [
-            'tag' => '1',
+            'tag'    => '1',
+            'accept' => 1,
         ];
 
         $result = $validate->rule($rule)->check($data);
 
         $this->assertFalse($result);
-        $this->assertEquals('password must be no,off,false or 0', $validate->getError());
+        $this->assertEquals('accept must be no,off,false or 0', $validate->getError('accept'));
     }
 
     public function testMultipleOf()
@@ -118,5 +120,21 @@ class ValidateTest extends TestCase
         $this->assertFalse($validate->multipleOf(4, '3'));
         $this->assertFalse($validate->multipleOf('4', 3));
 
+    }
+
+    /**
+     * 关系运算规则
+     * @return void
+     */
+    public function testRelationalOperator()
+    {
+        $validate = new Validate();
+
+        $this->assertTrue($validate->gt('2', 1)); // >
+        $this->assertTrue($validate->egt('1', 1)); // >=
+        $this->assertTrue($validate->lt('1', 2)); // <
+        $this->assertTrue($validate->elt('1', 1)); // <=
+        $this->assertTrue($validate->eq('1', 1)); // ==
+        $this->assertTrue($validate->neq('1', 0)); // <>
     }
 }

@@ -10,20 +10,13 @@
 // +----------------------------------------------------------------------
 declare(strict_types=1);
 
-namespace think\route\dispatch;
-
-use think\route\Dispatch;
+namespace think\contract;
 
 /**
- * Callback Dispatcher
+ * 枚举类接口
  */
-class Callback extends Dispatch
+interface Enumable
 {
-    public function exec()
-    {
-        // 执行回调方法
-        $vars = $this->getActionBindVars();
-
-        return $this->app->invoke($this->dispatch, $vars);
-    }
+	// 返回枚举类的清单
+    public static function values(): array;
 }
